@@ -1,14 +1,13 @@
 from collections import deque
 from datetime import datetime as dt
 
-
 ## to Class IpBucks for the challenge
 class IpBucks:
 
     def __init__(self, inac_prd, out_path):
-    ## Variables:
+    ## Fields:
 
-        ## constant fields:
+        ## constant variables:
         ## path to sessionization.txt
         self.out_path = out_path
         ## inactivity period length
@@ -18,7 +17,7 @@ class IpBucks:
         ## queue for bucks of ips by elapsed time
         self.ipList_que = deque([[]] + [[]] * inac_prd) # by seconds
         ## dictionary with session info of ips
-        self.ip_dict = {} # 'ip': [ip, start_dt, lastest_dt, duration, count]
+        self.ip_dict = {} # 'ip': [ip, start_dt, lastest_dt, duration, count, No]
 
         ## fields specific to each read-in line of log.csv
         self.elap = 0 # now - then
@@ -26,13 +25,13 @@ class IpBucks:
         self.now = 0
         self.ip = 0
         self.ipListQue_ind = False # Buck index in ipListQue
+        self.lineNo = 0 # Line No
 
 
     ## Methods:
 
     ## Update self.ipListQue_ind
     def ipListQue_find(self):
-        ## if: (not available before or) or ( available but no current session)
         if (self.ip not in self.ip_dict) or (self.ip_dict[self.ip] is None):
             self.ipListQue_ind = False
         else:
@@ -42,12 +41,12 @@ class IpBucks:
     ##     Cases: 1) ip not in dict; 2) dict[ip] is None; 3) dict[ip] is Not None
     def ipDict_update(self):
         if self.ipListQue_ind is not False: # already exists
-            ## 'ip': [ip, start_dt, lastest_dt, duration, count]
+            ## 'ip': [ip, start_dt, lastest_dt, duration, count, lineNo]
             self.ip_dict[self.ip][2] = self.now # update end
             self.ip_dict[self.ip][4] += 1
         else:
-            ## 'ip': [ip, start_dt, lastest_dt, duration, count]
-            self.ip_dict[self.ip] = [self.ip, self.now, self.now, 0, 1]
+            ## 'ip': [ip, start_dt, lastest_dt, duration, count, lineNo]
+            self.ip_dict[self.ip] = [self.ip, self.now, self.now, 0, 1, self.lineNo]
 
     ## Change the new ip between buckets self.ipList_que:
     ##     Cases: 1) ip not in que (not in dict || dict[ip] is None); 2) Buck 0; 3) Buck > 0
@@ -68,16 +67,21 @@ class IpBucks:
         ## last operation for update of each data line
         self.then = self.now
 
+    ## return a sorted list of ips in the ascending order of their first request time
+    def ips_sort(self, ips):
+        if len(ips) == 1:
+            return ips
+        else:
+            return sorted(ips, key = lambda x: self.ip_dict[x][-1])
+
     ## Writing session info of ips in the last bucket, and set Nones in self.ip_dict
     def writing(self):
         with open(self.out_path, 'a+') as file:
-            ips = self.ipList_que[-1] # get ips in the last bucket
+            ips = self.ips_sort(self.ipList_que[-1]) # get ips in the last bucket
             logs = map(lambda z: self.out_form(ip=z), ips) # list of session info lists
 
             for x in logs:
                 file.write(','.join(y for y in x) + '\n')
-
-        file.close()
 
     ## Given ip: return session in required form, and set Nones in self.ip_dict
     def out_form(self, ip):
@@ -93,7 +97,7 @@ class IpBucks:
         ip_list[4] = str(ip_list[4])
         self.ip_dict[ip] = None
 
-        return ip_list
+        return ip_list[:5]
 
     ## Update ipList_que when 1 sec elapses: 1 pop, 1 appendleft
     def ipListQue_update(self):
@@ -135,7 +139,7 @@ class IpBucks:
             self.ipListQue_update()
 
             ## (not existing in ipListQue) or (ip': None in dict)
-            if (self.ipListQue_ind is False) or (self.ipListQue_ind == (self.inac_prd - 1)):
+            if (self.ipListQue_ind is False) or (self.ipListQue_ind == (self.inac_prd)):
                 self.ipListQue_ind = False
             else:
                 self.ipListQue_ind += 1
@@ -163,8 +167,9 @@ class IpBucks:
             self.bucks_updateN(N = N - 1)
 
     ## Update instance of IpBucks before the last of data is finished
-    def update(self, input_list):
+    def update(self, input_list, lineNo):
         [self.ip, self.now] = input_list
+        self.lineNo = lineNo
         self.ipListQue_find()
         ## elap cannot be calculated for Case: then == 0
 
@@ -180,12 +185,13 @@ class IpBucks:
 
         ## write all the info in self.ip_dict
         with open(self.out_path, 'a+') as file:
-            ## process the Non_none records, and set them to Nones
-            logs = map(lambda y: self.out_form(y), filter(lambda x: self.ip_dict[x] is not None, self.ip_dict.keys()))
+            ## process and sort the Non_none records, and set them to Nones
+            names = self.ips_sort( list(filter(lambda x: self.ip_dict[x] is not None, self.ip_dict.keys())) )
+            logs = map(lambda y: self.out_form(y), names)
 
             ## write to output file
             for x in logs:
                 file.write(','.join(y for y in x) + '\n')
-        file.close()
+
 
 
