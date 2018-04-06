@@ -30,12 +30,12 @@ The structure of the queue is easy to maintain because, every time the sessions 
 Class IpBucks (short for " Ip Buckets") is defined in `BuckClass.py` to help facilitate the process of solving this challenge. Its attributes and built-in methods will take care of the most of the process for users, such as implementing and updating the dictionary and the queue mentioned above. Actually, all we just need to do is implement an instance of class IpBucks in the beginning, call `.update()` for each line from log.csv and call `.finish()` after the last line in log.csv is processed.
 
 ## 3. Instructions for Running the Code
-### `chmod +x run.sh`
+* `chmod +x run.sh`
 After cloning the repo to a local location, please change the permission for `run.sh` with the following command from within the `Data-Incubator-2018` folder:
 
     Data-Incubator-2018~$ chmod +x run.sh
     
-### `./run.sh`
+* `./run.sh`
 Once the `run.sh` becomes executable by the command above, we can run `run.sh` with the following command from within the `Data-Incubator-2018` folder:
 
     Data-Incubator-2018~$ ./run.sh
