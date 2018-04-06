@@ -1,7 +1,7 @@
 ## import Libraries:
 from datetime import datetime as dt
 import csv
-import BuckClass  ## defined in './BuckClass.py'
+import BuckClass  # defined in './BuckClass.py'
 import os.path
 
 
@@ -9,14 +9,11 @@ import os.path
 ## main function:
 
 ## Read in inactivity_period.txt
-# file = open('../input/inactivity_period.txt', 'r')
-# file = open(os.path.join(os.path.dirname(__file__), os.pardir, '/input/inactivity_period.txt'))
 cdir = os.path.dirname(__file__)
 file = open(cdir + '/../input/inactivity_period.txt')
-inac_prd = int(file.read()) ## seconds in integer
+inac_prd = int(file.read()) # seconds in integer
 
 ## Establish sessionization.txt:
-## out_path = '../output/sessionization.txt'
 out_path = cdir + '/../output/sessionization.txt'
 file = open(out_path, 'w')
 file.close()
@@ -49,7 +46,7 @@ for row in reader:
     ipBucks.update(input_list)
 
 ## Already finished last line of data
-# ipBucks.finish()
+ipBucks.finish()
 
 
 
