@@ -2,6 +2,7 @@
 ## Table of Contents
 1. Coding Language and Modules
 2. Approach: Ideas, Applied Data Structures and Self-defined Class
+3. Instructions for Running the Code
 
 ## 1. Coding Language and Dependencies
 ### Coding Language
@@ -27,3 +28,18 @@ The structure of the queue is easy to maintain because, every time the sessions 
 
 ### Self-defined Class
 Class IpBucks (short for " Ip Buckets") is defined in `BuckClass.py` to help facilitate the process of solving this challenge. Its attributes and built-in methods will take care of the most of the process for users, such as implementing and updating the dictionary and the queue mentioned above. Actually, all we just need to do is implement an instance of class IpBucks in the beginning, call `.update()` for each line from log.csv and call `.finish()` after the last line in log.csv is processed.
+
+## 3. Instructions for Running the Code
+#### Step 1: `chmod +x run.sh`
+After cloning the repo to a local location, please change the permission for `run.sh` with the following command from within the `Data-Incubator-2018` folder:
+
+    Data-Incubator-2018~$ chmod +x run.sh
+    
+#### Step 2: `./run.sh`
+Once the `run.sh` becomes executable by the command above, we can run `run.sh` with the following command from within the `Data-Incubator-2018` folder:
+
+    Data-Incubator-2018~$ ./run.sh
+  
+
+
+
