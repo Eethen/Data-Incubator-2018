@@ -1,11 +1,12 @@
 from collections import deque
 from datetime import datetime as dt
 
+
 ## to Class IpBucks for the challenge
 class IpBucks:
 
     def __init__(self, inac_prd, out_path):
-    ## Fields:
+    ## Variables:
 
         ## constant fields:
         ## path to sessionization.txt
@@ -15,16 +16,16 @@ class IpBucks:
 
         ## fields for all ips
         ## queue for bucks of ips by elapsed time
-        self.ipList_que = deque([[]] + [[]] * inac_prd) ## by seconds
+        self.ipList_que = deque([[]] + [[]] * inac_prd) # by seconds
         ## dictionary with session info of ips
-        self.ip_dict = {} ## 'ip': [ip, start_dt, lastest_dt, duration, count]
+        self.ip_dict = {} # 'ip': [ip, start_dt, lastest_dt, duration, count]
 
         ## fields specific to each read-in line of log.csv
-        self.elap = 0 ## now - then
-        self.then = 0 ## time from last update
+        self.elap = 0 # now - then
+        self.then = 0 # time from last update
         self.now = 0
         self.ip = 0
-        self.ipListQue_ind = False ## Buck index in ipListQue
+        self.ipListQue_ind = False # Buck index in ipListQue
 
 
     ## Methods:
@@ -52,20 +53,17 @@ class IpBucks:
     ##     Cases: 1) ip not in que (not in dict || dict[ip] is None); 2) Buck 0; 3) Buck > 0
     ## self.ipListQue_ind: current ipListQue_ind
     def ipListQue_switch(self):
-        if self.ipListQue_ind is 0: ## already in Buck 0
+        if self.ipListQue_ind is 0: # already in Buck 0
             return 0
-        elif self.ipListQue_ind is not False: ## already exist in Buck non_zero
+        elif self.ipListQue_ind is not False: # already exist in Buck non_zero
             self.ipList_que[self.ipListQue_ind].remove(self.ip)
 
-        self.ipList_que[0].append(self.ip) ## switch to Buck 0
+        self.ipList_que[0].append(self.ip) # switch to Buck 0
 
     ## Handle the 1st line of data
     def bucks_update0(self):
         self.ipDict_update()
         self.ipListQue_switch()
-
-        ## self.elap = 0
-        ## no need update self.ipListQue_ind; will be in the start of new line
 
         ## last operation for update of each data line
         self.then = self.now
@@ -73,8 +71,8 @@ class IpBucks:
     ## Writing session info of ips in the last bucket, and set Nones in self.ip_dict
     def writing(self):
         with open(self.out_path, 'a+') as file:
-            ips = self.ipList_que[-1] ## get ips in the last bucket
-            logs = map(lambda z: self.out_form(ip=z), ips) ## list of session info lists
+            ips = self.ipList_que[-1] # get ips in the last bucket
+            logs = map(lambda z: self.out_form(ip=z), ips) # list of session info lists
 
             for x in logs:
                 file.write(','.join(y for y in x) + '\n')
