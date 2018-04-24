@@ -1,4 +1,4 @@
-# Data-Incubator-2018
+# Insight-Data-2018
 ## Table of Contents
 1. Coding Language and Modules
 2. Approach: Ideas, Applied Data Structures and Self-defined Class
